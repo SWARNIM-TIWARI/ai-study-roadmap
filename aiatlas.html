@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIAtlas — Swarnim Tiwari</title>
+<meta name="description" content="Sequential layers for the AI stack. 11 modules. One builds into the next.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@1&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--paper:#F2EDE1;--ink:#0D0D0D;--white:#FFFFFF;--muted:#9A9080;--dim:#625A48;--line:#0D0D0D;--soft:#DDD5C4}
+body{background:var(--paper);color:var(--ink);font-family:'Space Mono',monospace;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}ul{list-style:none}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;padding:0}
+::selection{background:var(--ink);color:var(--paper)}
+:focus-visible{outline:2px solid var(--c,#E0180A);outline-offset:2px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--paper)}::-webkit-scrollbar-thumb{background:var(--soft)}
+
+.page{max-width:1020px;margin:0 auto}
+
+/* MASTHEAD */
+.mast{padding:30px 36px 0;position:relative}
+.mast-top{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:2.5px solid var(--ink);border-bottom:1px solid var(--ink)}
+.byline{font-family:'Space Mono',monospace;font-weight:700;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase}
+.mast-role{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mast-hero{position:relative;border-bottom:2.5px solid var(--ink);overflow:hidden}
+.wordmark{font-family:'Bebas Neue',sans-serif;font-size:clamp(90px,17vw,172px);letter-spacing:.02em;color:var(--ink);line-height:.88;display:block;position:relative;z-index:1;padding:6px 0 10px}
+.deco{position:absolute;right:-10px;top:0;width:200px;height:200px;pointer-events:none;z-index:0;opacity:.9}
+.deco-sq{position:absolute;right:44px;bottom:14px;width:24px;height:24px;background:#FFD600;transform:rotate(12deg);pointer-events:none;z-index:0}
+.mast-sub{display:flex;justify-content:space-between;align-items:center;padding:11px 0;gap:20px;flex-wrap:wrap}
+.tagline{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.04em;line-height:1.7}
+.prog{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.prog-n{font-family:'Space Mono',monospace;font-weight:700;font-size:10px;color:var(--ink);letter-spacing:.07em;white-space:nowrap}
+.prog-track{width:88px;height:3px;background:var(--soft)}
+.prog-fill{height:100%;background:var(--ink);width:0%;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+
+/* LIST */
+.list{padding:0 36px;border-top:2.5px solid var(--line)}
+.layer{--c:#2563EB;--cp:rgba(37,99,235,.07);border-bottom:1px solid var(--line);box-shadow:inset 4px 0 0 transparent;transition:box-shadow .15s;opacity:0;transform:translateY(16px);animation:rowIn .5s ease forwards}
+.layer:hover,.layer.open{box-shadow:inset 4px 0 0 var(--c)}
+.layer.done{opacity:.28!important}
+@keyframes rowIn{to{opacity:1;transform:translateY(0)}}
+.layer:nth-child(1){animation-delay:.04s}.layer:nth-child(2){animation-delay:.09s}.layer:nth-child(3){animation-delay:.14s}.layer:nth-child(4){animation-delay:.19s}.layer:nth-child(5){animation-delay:.24s}.layer:nth-child(6){animation-delay:.29s}.layer:nth-child(7){animation-delay:.34s}.layer:nth-child(8){animation-delay:.39s}.layer:nth-child(9){animation-delay:.44s}.layer:nth-child(10){animation-delay:.49s}.layer:nth-child(11){animation-delay:.54s}
+
+.row{display:grid;grid-template-columns:48px 112px 1fr 68px 26px 22px;align-items:center;gap:16px;padding:14px 0;cursor:pointer;user-select:none}
+.rnum{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#C2B6A2;letter-spacing:.03em;line-height:1;transition:color .14s}
+.layer:hover .rnum,.layer.open .rnum{color:var(--c)}
+.dtag{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);border:1.5px solid var(--c);padding:3px 7px;opacity:.6;transition:opacity .14s;white-space:nowrap}
+.layer:hover .dtag,.layer.open .dtag{opacity:1}
+.rtitle{font-family:'Syne',sans-serif;font-weight:700;font-size:14.5px;color:var(--ink);letter-spacing:-.01em;min-width:0}
+.layer.done .rtitle{text-decoration:line-through;color:var(--muted)}
+.rtime{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.03em;white-space:nowrap;text-align:right}
+.crcl{width:22px;height:22px;border:2px solid #C2B6A2;background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .14s,background .14s;cursor:pointer}
+.crcl:hover{border-color:var(--c)}
+.crcl svg{display:none}
+.layer.done .crcl{background:var(--c);border-color:var(--c)}
+.layer.done .crcl svg{display:block}
+.rcaret{font-family:'Space Mono',monospace;font-weight:700;font-size:18px;color:#C2B6A2;line-height:1;transition:transform .3s ease,color .14s}
+.layer.open .rcaret{transform:rotate(45deg);color:var(--c)}
+
+/* PANEL */
+.xwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s cubic-bezier(.4,0,.2,1)}
+.layer.open .xwrap{grid-template-rows:1fr}
+.xinner{overflow:hidden;min-height:0}
+.panel{background:var(--white);border-top:4px solid var(--c);border-left:4px solid var(--c);padding:24px 26px 28px;margin-bottom:1px}
+.sl{font-family:'Space Mono',monospace;font-weight:700;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-bottom:10px}
+.why-b{padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid #E4DAC8}
+.why-t{font-family:'Space Mono',monospace;font-size:12.5px;color:var(--dim);line-height:1.82;max-width:600px}
+.cgrid{display:grid;grid-template-columns:5fr 6fr;gap:28px;margin-bottom:20px}
+@media(max-width:640px){.cgrid{grid-template-columns:1fr;gap:18px}}
+.clist{display:flex;flex-direction:column;gap:8px}
+.ci{font-family:'Space Mono',monospace;font-size:11.5px;color:#5A5040;line-height:1.55;padding-left:16px;position:relative}
+.ci::before{content:'▪';position:absolute;left:0;color:var(--c);font-size:10px}
+.rlist{display:flex;flex-direction:column;gap:2px}
+.ri{display:flex;align-items:center;gap:8px;padding:6px 7px;transition:background .1s}
+.ri:hover{background:rgba(0,0,0,.04)}
+.ri:hover .ra{opacity:1}
+.rt{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--c);background:var(--cp);border:1px solid var(--c);padding:2px 5px;flex-shrink:0;min-width:44px;text-align:center}
+.rn{font-family:'Space Mono',monospace;font-size:11px;color:#5A5040;flex:1;min-width:0;line-height:1.45}
+.ra{font-size:11px;color:var(--c);opacity:0;transition:opacity .1s;flex-shrink:0}
+.lit-b{border-top:1px solid #E4DAC8;padding-top:18px}
+.lit-q{font-family:'DM Serif Display',serif;font-style:italic;font-size:17.5px;color:var(--ink);line-height:1.55;max-width:600px;padding-left:16px;border-left:3px solid var(--c)}
+
+/* FOOTER */
+.ft{max-width:1020px;margin:0 auto;padding:20px 36px;border-top:2.5px solid var(--line);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.ft a{font-family:'Space Mono',monospace;font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);border:2px solid var(--ink);padding:7px 14px;transition:background .12s,color .12s}
+.ft a:hover{background:var(--ink);color:var(--paper)}
+
+@media(max-width:520px){
+  .mast,.ft{padding-left:20px;padding-right:20px}
+  .list{padding:0 20px}
+  .row{grid-template-columns:38px 1fr 26px 20px;gap:10px}
+  .dtag,.rtime,.mast-role,.deco,.deco-sq{display:none}
+  .panel{padding:18px 16px 22px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.layer{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="mast">
+  <div class="mast-top">
+    <span class="byline">Swarnim Tiwari</span>
+    <span class="mast-role">AI Product &amp; Strategy</span>
+  </div>
+  <div class="mast-hero">
+    <span class="wordmark">AIAtlas</span>
+    <svg class="deco" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" stroke="#E0180A" stroke-width="2"/>
+      <circle cx="100" cy="100" r="60" stroke="#0D0D0D" stroke-width="1" opacity="0.18"/>
+      <line x1="0" y1="200" x2="200" y2="0" stroke="#0D0D0D" stroke-width="1.5" opacity="0.25"/>
+      <line x1="0" y1="0" x2="200" y2="200" stroke="#0D0D0D" stroke-width="1" opacity="0.12"/>
+    </svg>
+    <div class="deco-sq"></div>
+  </div>
+  <div class="mast-sub">
+    <div class="tagline">Sequential layers for the AI stack.<br>11 modules. One builds into the next.</div>
+    <div class="prog">
+      <span class="prog-n" id="pN">0 / 11</span>
+      <div class="prog-track"><div class="prog-fill" id="pF"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="list">
+
+<!-- 01 -->
+<div class="layer" style="--c:#2563EB;--cp:rgba(37,99,235,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">01</span><span class="dtag">Foundation</span>
+  <span class="rtitle">Transformers &amp; LLM Fundamentals</span>
+  <span class="rtime">3–4 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Attention is a specific matrix operation. Not a metaphor. Understanding it at the implementation level changes everything that comes after. Build something small in PyTorch before reading another architecture paper. The confusion clears faster than expected.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Self-attention mechanism (Q, K, V matrices)</li>
+      <li class="ci">Multi-head attention and why multiple heads matter</li>
+      <li class="ci">Positional encoding: sinusoidal, learned, RoPE</li>
+      <li class="ci">Tokenization: BPE, WordPiece, SentencePiece</li>
+      <li class="ci">Decoder-only vs encoder-decoder vs encoder-only</li>
+      <li class="ci">Pretraining objectives: next-token prediction, masked LM</li>
+      <li class="ci">Alignment: RLHF, PPO, DPO, Constitutional AI</li>
+      <li class="ci">Scaling laws: Kaplan 2020, Chinchilla 2022</li>
+      <li class="ci">KV cache mechanics and context window limits</li>
+      <li class="ci">Hallucination causes, not just symptoms</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Attention Is All You Need (Vaswani et al., 2017)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">The Illustrated Transformer (Jay Alammar)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/karpathy/nanoGPT" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">nanoGPT (Andrej Karpathy)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener"><span class="rt">Video</span><span class="rn">Zero to Hero Full Playlist (Karpathy)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Scaling Laws for Neural Language Models (Kaplan et al., 2020)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Chinchilla / Training Compute-Optimal LLMs (2022)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2203.02155" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">InstructGPT / RLHF (Ouyang et al., 2022)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2305.18290" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Direct Preference Optimization / DPO (2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/rasbt/LLMs-from-scratch" target="_blank" rel="noopener"><span class="rt">Book</span><span class="rn">Build a Large Language Model From Scratch (Raschka)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.oreilly.com/library/view/hands-on-large-language/9781098150952/" target="_blank" rel="noopener"><span class="rt">Book</span><span class="rn">Hands-On Large Language Models (Alammar &amp; Grootendorst)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://huggingface.co/learn/nlp-course" target="_blank" rel="noopener"><span class="rt">Course</span><span class="rn">Hugging Face NLP Course</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://web.stanford.edu/class/cs224n/" target="_blank" rel="noopener"><span class="rt">Course</span><span class="rn">Stanford CS224N: NLP with Deep Learning</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.deeplearning.ai/short-courses/how-transformer-llms-work/" target="_blank" rel="noopener"><span class="rt">Course</span><span class="rn">How Transformer LLMs Work (DeepLearning.AI)</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Could you derive why decoder-only architectures won, on a whiteboard, without notes?</p></div>
+</div></div></div>
+</div>
+
+<!-- 02 -->
+<div class="layer" style="--c:#C2500A;--cp:rgba(194,80,10,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">02</span><span class="dtag">Computing</span>
+  <span class="rtitle">GPU / Computing Economics</span>
+  <span class="rtime">1–2 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Every model release, every capability claim, every "it surprised us" moment traces back to a compute budget. FLOPs and dollars before business intuition. Handwaving about scale is not the same as reasoning about it.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">FLOPs and what they actually measure</li>
+      <li class="ci">Memory bandwidth as the real bottleneck, not raw compute</li>
+      <li class="ci">Model FLOP Utilization (MFU) in practice</li>
+      <li class="ci">H100 vs A100 vs TPU v5 architecture differences</li>
+      <li class="ci">Tensor, pipeline, and data parallelism tradeoffs</li>
+      <li class="ci">Training cost estimation from parameter count</li>
+      <li class="ci">Inference cost structure: a different problem than training</li>
+      <li class="ci">CapEx vs OpEx and the rent-vs-own calculus</li>
+      <li class="ci">Price-performance trends across hardware generations</li>
+      <li class="ci">Power, cooling, and the energy constraint on frontier models</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Which GPU for Deep Learning? (Tim Dettmers)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://horace.io/brrr_intro.html" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Making Deep Learning Go Brrrr (Horace He)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://epochai.org/data/notable-ai-models" target="_blank" rel="noopener"><span class="rt">Data</span><span class="rn">Notable AI Models: Training Compute Tracker (Epoch AI)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://epochai.org/trends" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">AI Hardware and Compute Trends (Epoch AI)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.semianalysis.com/" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">SemiAnalysis: GPU Economics and AI Infrastructure</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Given a parameter count, can you ballpark training cost within 2x and explain why inference, not training, is what actually breaks margins at scale?</p></div>
+</div></div></div>
+</div>
+
+<!-- 03 -->
+<div class="layer" style="--c:#16956A;--cp:rgba(22,149,106,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">03</span><span class="dtag">Systems</span>
+  <span class="rtitle">AI Infrastructure</span>
+  <span class="rtime">2–3 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Training a model is a project. Running it in production is a system. These require different skills and produce different failures. Most of the industry learns this the hard way because nobody treats infrastructure as a study subject.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Distributed training: data, tensor, pipeline parallelism</li>
+      <li class="ci">FSDP (Fully Sharded Data Parallel) and ZeRO stages</li>
+      <li class="ci">Megatron-LM and hybrid parallelism at scale</li>
+      <li class="ci">Inference serving: vLLM, TensorRT-LLM, continuous batching</li>
+      <li class="ci">PagedAttention and why it changed serving economics</li>
+      <li class="ci">Quantization: INT8, GPTQ, AWQ, bitsandbytes</li>
+      <li class="ci">Speculative decoding</li>
+      <li class="ci">RAG architecture and vector database integration</li>
+      <li class="ci">Kubernetes, GPU Operator, and cluster orchestration</li>
+      <li class="ci">RDMA and InfiniBand networking for multi-node training</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Efficient Memory Management / PagedAttention (vLLM, 2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2208.07339" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">LLM.int8(): 8-bit Matrix Multiplication (Dettmers et al., 2022)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://pytorch.org/docs/stable/fsdp.html" target="_blank" rel="noopener"><span class="rt">Docs</span><span class="rn">PyTorch FSDP Official Documentation</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/microsoft/DeepSpeed" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">DeepSpeed (Microsoft)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/NVIDIA/Megatron-LM" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">Megatron-LM (NVIDIA)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">vLLM: High-Throughput LLM Serving</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/" target="_blank" rel="noopener"><span class="rt">Book</span><span class="rn">Designing Machine Learning Systems (Chip Huyen)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/" target="_blank" rel="noopener"><span class="rt">Docs</span><span class="rn">NVIDIA GPU Operator Documentation</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Could you design a serving stack for a 70B model that holds a real latency SLA under load?</p></div>
+</div></div></div>
+</div>
+
+<!-- 04 -->
+<div class="layer" style="--c:#7C3AED;--cp:rgba(124,58,237,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">04</span><span class="dtag">Frontier</span>
+  <span class="rtitle">Agent Systems</span>
+  <span class="rtime">2–3 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Single-turn Q&A is largely solved. The hard problem is sequential decisions with tool access, real consequences, and compounding context. Agents are where LLMs become economically transformative and technically demanding at the same time.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">ReAct: reasoning and acting in a loop</li>
+      <li class="ci">Chain-of-Thought and Tree-of-Thought prompting</li>
+      <li class="ci">Tool use and function calling</li>
+      <li class="ci">Memory: episodic, semantic, working, procedural</li>
+      <li class="ci">Multi-agent architectures: supervisor and specialist patterns</li>
+      <li class="ci">LangGraph state machines for agent control flow</li>
+      <li class="ci">Human-in-the-loop design</li>
+      <li class="ci">Guardrails and error recovery strategies</li>
+      <li class="ci">Failure taxonomy: loops, drift, silent wrong answers</li>
+      <li class="ci">Evaluation frameworks built for agentic behavior</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">ReAct: Synergizing Reasoning and Acting in LLMs (2022)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2305.10601" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Tree of Thoughts (Yao et al., 2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">LLM Powered Autonomous Agents (Lilian Weng)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener"><span class="rt">Docs</span><span class="rn">LangGraph Official Documentation</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://docs.crewai.com/" target="_blank" rel="noopener"><span class="rt">Docs</span><span class="rn">CrewAI Official Documentation</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/geekan/MetaGPT" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">MetaGPT: Multi-Agent Framework</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.anthropic.com/model-spec" target="_blank" rel="noopener"><span class="rt">Docs</span><span class="rn">Anthropic Model Spec: Agentic Behavior and Safety</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">In a 10-step agent pipeline, where would you bet the first failure happens, and how would you catch it before a user does?</p></div>
+</div></div></div>
+</div>
+
+<!-- 05 -->
+<div class="layer" style="--c:#A67C00;--cp:rgba(166,124,0,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">05</span><span class="dtag">Rigor</span>
+  <span class="rtitle">Model Evaluation</span>
+  <span class="rtime">1–2 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Vibes are not a measurement system. A model that "feels better" is not an insight. Trustworthy evaluation is domain-specific, contamination-resistant, and tied to metrics that hold up under pressure. That is what separates a production deployment from a demo.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Benchmark design and Goodhart's Law in AI</li>
+      <li class="ci">MMLU, GPQA, HumanEval, LiveCodeBench</li>
+      <li class="ci">HELM: holistic, multi-metric evaluation framework</li>
+      <li class="ci">LLM-as-judge methodology and its failure modes</li>
+      <li class="ci">Human preference evaluation: ELO and Arena-style</li>
+      <li class="ci">Training data contamination and leakage detection</li>
+      <li class="ci">Domain-specific eval harness construction</li>
+      <li class="ci">Safety evaluation and red-teaming methods</li>
+      <li class="ci">Hallucination measurement techniques</li>
+      <li class="ci">Robustness and distribution shift testing</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://arxiv.org/abs/2211.09110" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">HELM: Holistic Evaluation of Language Models (2022)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2209.07858" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Red Teaming Language Models (Anthropic, 2022)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://lmarena.ai/" target="_blank" rel="noopener"><span class="rt">Tool</span><span class="rn">Chatbot Arena / LMSYS: Human Preference Leaderboard</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard" target="_blank" rel="noopener"><span class="rt">Tool</span><span class="rn">HuggingFace Open LLM Leaderboard</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/confident-ai/deepeval" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">DeepEval: LLM Evaluation Framework</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/explodinggradients/ragas" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">RAGAS: RAG Evaluation</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/openai/evals" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">OpenAI Evals</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://hamel.dev/blog/posts/evals/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Your AI Product Needs Evals (Hamel Husain)</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">How would you design an eval suite for an agent, knowing standard benchmarks will tell you what you want to hear?</p></div>
+</div></div></div>
+</div>
+
+<!-- 06 -->
+<div class="layer" style="--c:#0E8F8A;--cp:rgba(14,143,138,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">06</span><span class="dtag">Ecosystem</span>
+  <span class="rtitle">Open-Source Ecosystem</span>
+  <span class="rtime">1–2 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">The frontier does not live only inside labs. Recent open models match closed ones from 18 months ago. Knowing which ones, why, and how to run and adapt them changes your build-vs-buy calculus in a material way.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Major open model lineages: Llama, Mistral, Qwen, DeepSeek, Falcon</li>
+      <li class="ci">GGUF and GGML quantization formats for local inference</li>
+      <li class="ci">LoRA (Low-Rank Adaptation) mechanics</li>
+      <li class="ci">QLoRA: quantization combined with LoRA</li>
+      <li class="ci">DoRA variant and when it outperforms LoRA</li>
+      <li class="ci">HuggingFace Hub structure: models, datasets, Spaces</li>
+      <li class="ci">PEFT and TRL library training loops</li>
+      <li class="ci">Licensing realities: Apache 2.0, Llama community license, CC-BY</li>
+      <li class="ci">Power-law dynamics in model downloads and usage</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://arxiv.org/abs/2106.09685" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">LoRA: Low-Rank Adaptation of Large Language Models (2021)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">QLoRA: Efficient Finetuning (Dettmers et al., 2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/huggingface/peft" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">HuggingFace PEFT</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://github.com/huggingface/trl" target="_blank" rel="noopener"><span class="rt">Code</span><span class="rn">HuggingFace TRL: Transformer Reinforcement Learning</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://huggingface.co/models" target="_blank" rel="noopener"><span class="rt">Tool</span><span class="rn">HuggingFace Hub: Model Repository</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://huggingface.co/learn/nlp-course" target="_blank" rel="noopener"><span class="rt">Course</span><span class="rn">HuggingFace NLP Course</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard" target="_blank" rel="noopener"><span class="rt">Tool</span><span class="rn">Open LLM Leaderboard (HuggingFace)</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Given a fine-tuning task and a real budget, what is your stack, and when does calling an API actually make more sense?</p></div>
+</div></div></div>
+</div>
+
+<!-- 07 -->
+<div class="layer" style="--c:#C41F6A;--cp:rgba(196,31,106,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">07</span><span class="dtag">Economics</span>
+  <span class="rtitle">AI Business Models</span>
+  <span class="rtime">1–2 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Inference margins are thin and compress as models commoditize. Most "AI businesses" are distribution plays. Getting the unit economics wrong at the product strategy stage is expensive to unwind.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Token economics and inference margin structure</li>
+      <li class="ci">Why API gross margins compress at scale</li>
+      <li class="ci">Vertical AI vs horizontal AI platform strategy</li>
+      <li class="ci">Data moats, network effects, and workflow lock-in</li>
+      <li class="ci">Build vs buy vs fine-tune from the vendor perspective</li>
+      <li class="ci">Open vs closed source as a strategic business choice</li>
+      <li class="ci">AI-native SaaS vs AI features bolted onto legacy SaaS</li>
+      <li class="ci">The wrapper trap and viable paths out of it</li>
+      <li class="ci">Enterprise AI sales motion and procurement cycles</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://www.sequoiacap.com/article/generative-ai-act-two/" target="_blank" rel="noopener"><span class="rt">Essay</span><span class="rn">Generative AI Act Two (Sequoia Capital)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://a16z.com/who-owns-the-generative-ai-platform/" target="_blank" rel="noopener"><span class="rt">Essay</span><span class="rn">Who Owns the Generative AI Platform? (a16z)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.ben-evans.com/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Benedict Evans: AI Business Analysis</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://aiindex.stanford.edu/report/" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">Stanford AI Index: Annual Report</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Why is sub-60% gross margin a red flag for a pure LLM API wrapper, and what structural change would fix it?</p></div>
+</div></div></div>
+</div>
+
+<!-- 08 -->
+<div class="layer" style="--c:#B82020;--cp:rgba(184,32,32,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">08</span><span class="dtag">Strategy</span>
+  <span class="rtitle">AI Strategy &amp; Organizational Adoption</span>
+  <span class="rtime">1–2 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Most enterprise AI projects work technically. They fail organizationally. The pilot-to-production gap is a people and process problem, not a model problem. This layer is where technical leaders create business value that engineers alone cannot.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">AI maturity models and organizational readiness assessment</li>
+      <li class="ci">Build vs buy vs partner from the buyer's perspective</li>
+      <li class="ci">The pilot-to-production gap and why POCs stall</li>
+      <li class="ci">Change management for AI-disrupted workflows</li>
+      <li class="ci">Aligning IT, legal, compliance, and leadership on one rollout</li>
+      <li class="ci">AI governance structures inside organizations</li>
+      <li class="ci">Measuring and communicating ROI on AI investments</li>
+      <li class="ci">The last-mile problem: user adoption and behavioral change</li>
+      <li class="ci">Risk frameworks for enterprise AI deployment</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">McKinsey State of AI: Annual Survey</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.bcg.com/capabilities/artificial-intelligence" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">BCG: AI Adoption and Maturity</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://hbr.org/topic/subject/ai-and-machine-learning" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Harvard Business Review: AI Strategy</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Could you tell a CFO, in their language, why an 80%-accurate model might still be a bad investment?</p></div>
+</div></div></div>
+</div>
+
+<!-- 09 -->
+<div class="layer" style="--c:#0380A4;--cp:rgba(3,128,164,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">09</span><span class="dtag">Design</span>
+  <span class="rtitle">Human-Computer Interaction</span>
+  <span class="rtime">1–2 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Streaming output, probabilistic responses, and variable latency break every interaction pattern designed for deterministic software. The conventions of HCI are being rewritten in real time. Most products are not paying attention.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Trust calibration: when confidence should and should not show</li>
+      <li class="ci">Latency perception and progressive disclosure</li>
+      <li class="ci">Prompt UX as product design, not just engineering</li>
+      <li class="ci">Agentic UI: when to interrupt vs proceed autonomously</li>
+      <li class="ci">Designing for graceful failure and uncertainty</li>
+      <li class="ci">Cognitive load in AI-augmented workflows</li>
+      <li class="ci">Streaming output and how it rewrites UX conventions</li>
+      <li class="ci">Explainability UX: what users actually need to know</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://pair.withgoogle.com/guidebook/" target="_blank" rel="noopener"><span class="rt">Guide</span><span class="rn">Google PAIR Guidebook: People and AI Research</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.nngroup.com/topic/artificial-intelligence/" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">Nielsen Norman Group: AI UX Research</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://maggieappleton.com/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Maggie Appleton: AI Interface Patterns</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://wattenberger.com/" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Amelia Wattenberger: Interface Design and AI</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.hup.harvard.edu/books/9780262544177" target="_blank" rel="noopener"><span class="rt">Book</span><span class="rn">Human-Centered AI (Ben Shneiderman)</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">How would you design an agent that asks for clarification at exactly the right moments, not too often, not too rarely?</p></div>
+</div></div></div>
+</div>
+
+<!-- 10 -->
+<div class="layer" style="--c:#8B2FC9;--cp:rgba(139,47,201,.07)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">10</span><span class="dtag">Embodiment</span>
+  <span class="rtitle">Robotics + Multimodal AI</span>
+  <span class="rtime">2–3 wks</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Text is a compressed channel. Physical manipulation, visual reasoning, and spatial understanding are harder problems with more impact. The bottleneck in robotics is data, not architecture or compute. Knowing why changes how you read every progress claim in this space.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">Vision Transformers (ViT) and CLIP architecture</li>
+      <li class="ci">Vision-language-action (VLA) models for robotics</li>
+      <li class="ci">Sim-to-real transfer and why it is harder than it looks</li>
+      <li class="ci">The data bottleneck: why robotics lags language AI</li>
+      <li class="ci">Open X-Embodiment and cross-robot transfer</li>
+      <li class="ci">Hierarchical planning in embodied agents</li>
+      <li class="ci">Multimodal fusion strategies across modalities</li>
+      <li class="ci">World models as the path from perception to planning</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">CLIP: Learning Transferable Visual Models (Radford et al., 2021)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2307.15818" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">RT-2: Robotics Transformer 2 (Brohan et al., 2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2303.03378" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">PaLM-E: An Embodied Multimodal Language Model (2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://arxiv.org/abs/2310.08864" target="_blank" rel="noopener"><span class="rt">Paper</span><span class="rn">Open X-Embodiment: Cross-Robot Transfer (2023)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.physicalintelligence.company/blog" target="_blank" rel="noopener"><span class="rt">Blog</span><span class="rn">Physical Intelligence: Robotics Research Blog</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.youtube.com/@YannicKilcher" target="_blank" rel="noopener"><span class="rt">Video</span><span class="rn">Yannic Kilcher: Paper Walkthroughs (YouTube)</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">What is the actual bottleneck preventing robot generalization today, and why is the answer not compute?</p></div>
+</div></div></div>
+</div>
+
+<!-- 11 -->
+<div class="layer" style="--c:#5A6A82;--cp:rgba(90,106,130,.06)">
+<div class="row" role="button" tabindex="0">
+  <button class="crcl" aria-label="Mark complete"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="rnum">11</span><span class="dtag">Context</span>
+  <span class="rtitle">AI Geopolitics &amp; Governance</span>
+  <span class="rtime">1 wk</span><span class="rcaret">+</span>
+</div>
+<div class="xwrap"><div class="xinner"><div class="panel">
+  <div class="why-b"><div class="sl">Why This Layer Exists</div>
+  <p class="why-t">Chip export controls have direct technical consequences. The EU AI Act has direct deployment consequences. These are not abstract policy debates. They are constraints shaping what can be built and where. Literacy here takes one week and compounds across everything else.</p></div>
+  <div class="cgrid">
+    <div><div class="sl">Core Concepts</div><ul class="clist">
+      <li class="ci">US export controls on chips (BIS rules) and their actual effects</li>
+      <li class="ci">Semiconductor supply chain: TSMC, ASML, and chokepoints</li>
+      <li class="ci">Sovereign AI strategies: EU, India, UAE, China</li>
+      <li class="ci">EU AI Act: key obligations and risk tiers</li>
+      <li class="ci">Open-source models as geopolitical equalizers</li>
+      <li class="ci">Military AI applications and deterrence dynamics</li>
+      <li class="ci">Talent, energy, and data as strategic resources</li>
+    </ul></div>
+    <div><div class="sl">Resources</div><div class="rlist">
+      <a class="ri" href="https://cset.georgetown.edu/" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">CSET: Center for Security and Emerging Technology (Georgetown)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.simonandschuster.com/books/Chip-War/Chris-Miller/9781982172008" target="_blank" rel="noopener"><span class="rt">Book</span><span class="rn">Chip War (Chris Miller)</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.rand.org/topics/artificial-intelligence.html" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">RAND Corporation: AI and National Security</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://www.brookings.edu/topic/artificial-intelligence/" target="_blank" rel="noopener"><span class="rt">Research</span><span class="rn">Brookings Institution: AI Governance</span><span class="ra">↗</span></a>
+      <a class="ri" href="https://epochai.org/" target="_blank" rel="noopener"><span class="rt">Data</span><span class="rn">Epoch AI: Compute Trends and Research</span><span class="ra">↗</span></a>
+    </div></div>
+  </div>
+  <div class="lit-b"><div class="sl">Litmus</div>
+  <p class="lit-q">Can you read a chip-export headline and immediately know who it affects, without stopping to look anything up?</p></div>
+</div></div></div>
+</div>
+
+</div><!-- /list -->
+
+<footer class="ft">
+  <a href="https://github.com/SWARNIM-TIWARI" target="_blank" rel="noopener">GitHub</a>
+  <a href="https://www.linkedin.com/in/swarnimtiwari1" target="_blank" rel="noopener">LinkedIn</a>
+</footer>
+
+</div>
+<script>
+document.querySelectorAll('.row').forEach(function(row){
+  row.addEventListener('click',function(e){
+    if(e.target.closest('.crcl'))return;
+    var l=row.closest('.layer');
+    var o=l.classList.toggle('open');
+    row.setAttribute('aria-expanded',String(o));
+  });
+  row.addEventListener('keydown',function(e){
+    if((e.key==='Enter'||e.key===' ')&&!e.target.closest('.crcl')){e.preventDefault();row.click();}
+  });
+});
+document.querySelectorAll('.crcl').forEach(function(b){
+  b.addEventListener('click',function(e){
+    e.stopPropagation();
+    b.closest('.layer').classList.toggle('done');
+    var d=document.querySelectorAll('.layer.done').length;
+    var t=document.querySelectorAll('.layer').length;
+    document.getElementById('pN').textContent=d+' / '+t;
+    document.getElementById('pF').style.width=(d/t*100)+'%';
+  });
+});
+</script>
+</body>
+</html>
