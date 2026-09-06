@@ -13,7 +13,7 @@
 
 **Sequential layers for the AI stack.**  
 11 modules. One builds into the next.  
-Resources, concepts, and a litmus test for each layer. All linked.
+Resources, concepts and a litmus test for each layer. All linked.
 
 <br/>
 
@@ -23,7 +23,7 @@ Resources, concepts, and a litmus test for each layer. All linked.
 
 ## Why this order
 
-Most people study AI randomly. They hit a transformers tutorial, watch a YouTube video about agents, read a thread about GPU pricing, and never connect any of it.
+Most people study AI randomly. They hit a transformers tutorial, watch a YouTube video about agents, read a thread about GPU pricing but never connect any of it.
 
 This framework is built on one idea: **each layer depends on the one above it.** You can't reason about agent reliability without understanding inference cost. You can't price an AI product without knowing what it costs to run. Depth where it compounds. Literacy everywhere else, by choice.
 
@@ -116,7 +116,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 ## Module Breakdown
 
 <details>
-<summary><b>01 — Transformers & LLM Fundamentals</b> &nbsp;|&nbsp; Foundation</summary>
+<summary><b>01 = Transformers & LLM Fundamentals</b> &nbsp;|&nbsp; Foundation</summary>
 <br/>
 
 > If you can't explain attention without hand-waving, every opinion you have about AI is borrowed, not earned.
@@ -152,14 +152,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Course | [How Transformer LLMs Work (DeepLearning.AI)](https://www.deeplearning.ai/short-courses/how-transformer-llms-work/) |
 
 **Litmus Test**
-> *Could you derive why decoder-only architectures won, on a whiteboard, without notes?*
+> *Could you derive why decoder-only architectures won, on a whiteboard without notes?*
 
 </details>
 
 ---
 
 <details>
-<summary><b>02 — GPU / Computing Economics</b> &nbsp;|&nbsp; Computing</summary>
+<summary><b>02 = GPU / Computing Economics</b> &nbsp;|&nbsp; Computing</summary>
 <br/>
 
 > Every model release, every capability claim traces back to a compute budget. FLOPs and dollars before business intuition.
@@ -194,7 +194,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 ---
 
 <details>
-<summary><b>03 — AI Infrastructure</b> &nbsp;|&nbsp; Systems</summary>
+<summary><b>03 = AI Infrastructure</b> &nbsp;|&nbsp; Systems</summary>
 <br/>
 
 > Training a model is a project. Running it in production is a system. These require different skills and produce different failures.
@@ -232,7 +232,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 ---
 
 <details>
-<summary><b>04 — Agent Systems</b> &nbsp;|&nbsp; Frontier</summary>
+<summary><b>04 = Agent Systems</b> &nbsp;|&nbsp; Frontier</summary>
 <br/>
 
 > Single-turn Q&A is largely solved. The hard problem is sequential decisions with tool access, real consequences, and compounding context.
@@ -262,14 +262,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Docs | [Anthropic Model Spec: Agentic Behavior and Safety](https://www.anthropic.com/model-spec) |
 
 **Litmus Test**
-> *In a 10-step agent pipeline, where would you bet the first failure happens, and how would you catch it before a user does?*
+> *In a 10 step agent pipeline, where would you bet the first failure happens and how would you catch it before a user does?*
 
 </details>
 
 ---
 
 <details>
-<summary><b>05 — Model Evaluation</b> &nbsp;|&nbsp; Rigor</summary>
+<summary><b>05 = Model Evaluation</b> &nbsp;|&nbsp; Rigor</summary>
 <br/>
 
 > Vibes are not a measurement system. Trustworthy evaluation is domain-specific, contamination-resistant, and tied to metrics that hold up under pressure.
@@ -307,7 +307,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 ---
 
 <details>
-<summary><b>06 — Open-Source Ecosystem</b> &nbsp;|&nbsp; Ecosystem</summary>
+<summary><b>06 = Open Source Ecosystem</b> &nbsp;|&nbsp; Ecosystem</summary>
 <br/>
 
 > The frontier does not live only inside labs. Recent open models match closed ones from 18 months ago.
@@ -321,7 +321,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 - HuggingFace Hub structure: models, datasets, Spaces
 - PEFT and TRL library training loops
 - Licensing realities: Apache 2.0, Llama community license, CC-BY
-- Power-law dynamics in model downloads and usage
+- Power law dynamics in model downloads and usage
 
 **Resources**
 
@@ -336,14 +336,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Tool | [Open LLM Leaderboard (HuggingFace)](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) |
 
 **Litmus Test**
-> *Given a fine-tuning task and a real budget, what is your stack, and when does calling an API actually make more sense?*
+> *Given a fine-tuning task and a real budget, what is your stack and when does calling an API actually make more sense?*
 
 </details>
 
 ---
 
 <details>
-<summary><b>07 — AI Business Models</b> &nbsp;|&nbsp; Economics</summary>
+<summary><b>07 = AI Business Models</b> &nbsp;|&nbsp; Economics</summary>
 <br/>
 
 > Inference margins are thin and compress as models commoditize. Most "AI businesses" are distribution plays.
@@ -369,14 +369,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Research | [Stanford AI Index: Annual Report](https://aiindex.stanford.edu/report/) |
 
 **Litmus Test**
-> *Why is sub-60% gross margin a red flag for a pure LLM API wrapper, and what structural change would fix it?*
+> *Why is sub-60% gross margin a red flag for a pure LLM API wrapper and what structural change would fix it?*
 
 </details>
 
 ---
 
 <details>
-<summary><b>08 — AI Strategy & Organizational Adoption</b> &nbsp;|&nbsp; Strategy</summary>
+<summary><b>08 = AI Strategy & Organizational Adoption</b> &nbsp;|&nbsp; Strategy</summary>
 <br/>
 
 > Most enterprise AI projects work technically. They fail organizationally. The pilot-to-production gap is a people and process problem, not a model problem.
@@ -401,14 +401,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Blog | [Harvard Business Review: AI Strategy](https://hbr.org/topic/subject/ai-and-machine-learning) |
 
 **Litmus Test**
-> *Could you tell a CFO, in their language, why an 80%-accurate model might still be a bad investment?*
+> *Could you tell a CFO, in their language, why an 80% accurate model might still be a bad investment?*
 
 </details>
 
 ---
 
 <details>
-<summary><b>09 — Human-Computer Interaction</b> &nbsp;|&nbsp; Design</summary>
+<summary><b>09 = Human-Computer Interaction</b> &nbsp;|&nbsp; Design</summary>
 <br/>
 
 > Streaming output, probabilistic responses, and variable latency break every interaction pattern designed for deterministic software.
@@ -441,7 +441,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 ---
 
 <details>
-<summary><b>10 — Robotics + Multimodal AI</b> &nbsp;|&nbsp; Embodiment</summary>
+<summary><b>10 = Robotics + Multimodal AI</b> &nbsp;|&nbsp; Embodiment</summary>
 <br/>
 
 > Text is a compressed channel. Physical manipulation, visual reasoning, and spatial understanding are harder problems with more impact.
@@ -468,14 +468,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Video | [Yannic Kilcher: Paper Walkthroughs (YouTube)](https://www.youtube.com/@YannicKilcher) |
 
 **Litmus Test**
-> *What is the actual bottleneck preventing robot generalization today, and why is the answer not compute?*
+> *What is the actual bottleneck preventing robot generalization today and why is the answer not compute?*
 
 </details>
 
 ---
 
 <details>
-<summary><b>11 — AI Geopolitics & Governance</b> &nbsp;|&nbsp; Context</summary>
+<summary><b>11 = AI Geopolitics & Governance</b> &nbsp;|&nbsp; Context</summary>
 <br/>
 
 > Chip export controls have direct technical consequences. These are not abstract policy debates. They are constraints shaping what can be built and where.
@@ -500,7 +500,7 @@ This framework is built on one idea: **each layer depends on the one above it.**
 | Data | [Epoch AI: Compute Trends and Research](https://epochai.org/) |
 
 **Litmus Test**
-> *Can you read a chip-export headline and immediately know who it affects, without stopping to look anything up?*
+> *Can you read a chip export headline and immediately know who it affects without stopping to look anything up?*
 
 </details>
 
@@ -510,14 +510,14 @@ This framework is built on one idea: **each layer depends on the one above it.**
 
 **[→ Open the interactive version](https://swarnim-ai-study-roadmap.vercel.app/)**
 
-Click any layer to expand concepts, resources, and a litmus test.  
+Click any layer to expand concepts, resources & a litmus test.  
 Click the checkbox to mark it done. Progress bar at the top tracks where you are.
 
 ---
 
 ## Built by
 
-**Swarnim Tiwari** — AI Product & Strategy
+**Swarnim Tiwari** - AI Product & Strategy
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/swarnimtiwari1)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat-square&logo=github)](https://github.com/SWARNIM-TIWARI)
