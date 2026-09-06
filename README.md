@@ -13,7 +13,7 @@
 
 **Sequential layers for the AI stack.**  
 11 modules. One builds into the next.  
-Resources, concepts, and a litmus test for each layer — all linked.
+Resources, concepts, and a litmus test for each layer. All linked.
 
 <br/>
 
